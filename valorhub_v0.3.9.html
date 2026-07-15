@@ -1,0 +1,2690 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="ValorHub：VALORANT 玩家攻略與武器資訊首頁原型。" />
+  <title>ValorHub｜VALORANT 玩家資訊中心</title>
+  <style>
+    :root {
+      --bg: #f4f7fb;
+      --surface: rgba(255, 255, 255, 0.92);
+      --surface-strong: #ffffff;
+      --primary: #5f78f;
+      --primary-dark: #34445f;
+      --primary-soft: #dce5f0;
+      --text: #182235;
+      --muted: #667085;
+      --border: #dce3ec;
+      --shadow: 0 14px 40px rgba(52, 68, 95, 0.12);
+      --radius: 22px;
+      --nav-height: 76px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      scroll-padding-top: calc(var(--nav-height) + 22px);
+    }
+
+    body {
+      margin: 0;
+      min-width: 320px;
+      color: var(--text);
+      background:
+        radial-gradient(circle at top left, rgba(95, 113, 143, 0.18), transparent 30%),
+        linear-gradient(180deg, #eef3f9 0%, var(--bg) 35%, #f8fafc 100%);
+      font-family: Inter, "Noto Sans TC", "Microsoft JhengHei", system-ui, sans-serif;
+      line-height: 1.6;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    button {
+      border: 0;
+    }
+
+    img {
+      display: block;
+      max-width: 100%;
+    }
+
+    .container {
+      width: min(1180px, calc(100% - 40px));
+      margin: 0 auto;
+    }
+
+    .site-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      height: var(--nav-height);
+      border-bottom: 1px solid rgba(220, 227, 236, 0.85);
+      background: rgba(244, 247, 251, 0.86);
+      backdrop-filter: blur(18px);
+    }
+
+    .nav-wrap {
+      min-height: var(--nav-height);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .brand {
+      display: inline-flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--text);
+      text-decoration: none;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.02em;
+      flex-shrink: 0;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 14px;
+      color: white;
+      background: linear-gradient(145deg, #7488aa, #40516e);
+      box-shadow: 0 8px 22px rgba(64, 81, 110, 0.25);
+      font-weight: 900;
+    }
+
+    .desktop-nav {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .desktop-nav a,
+    .mobile-nav a {
+      color: var(--muted);
+      text-decoration: none;
+      font-weight: 700;
+      border-radius: 12px;
+      transition: 180ms ease;
+    }
+
+    .desktop-nav a {
+      padding: 10px 14px;
+    }
+
+    .desktop-nav a:hover,
+    .desktop-nav a:focus-visible,
+    .mobile-nav a:hover,
+    .mobile-nav a:focus-visible {
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      outline: none;
+    }
+
+    .menu-button {
+      display: none;
+      width: 44px;
+      height: 44px;
+      border-radius: 13px;
+      background: var(--surface-strong);
+      color: var(--primary-dark);
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(52, 68, 95, 0.12);
+    }
+
+    .mobile-nav {
+      display: none;
+    }
+
+    main {
+      overflow: hidden;
+    }
+
+    .hero {
+      padding: 86px 0 54px;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      align-items: center;
+      gap: 48px;
+    }
+
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px 13px;
+      border: 1px solid rgba(95, 113, 143, 0.18);
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: rgba(255, 255, 255, 0.72);
+      font-size: 0.9rem;
+      font-weight: 800;
+    }
+
+    h1,
+    h2,
+    h3,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: clamp(2.7rem, 7vw, 5.6rem);
+      line-height: 0.98;
+      letter-spacing: -0.06em;
+    }
+
+    .hero-copy p {
+      max-width: 650px;
+      margin-bottom: 30px;
+      color: var(--muted);
+      font-size: clamp(1rem, 2vw, 1.18rem);
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      border-radius: 14px;
+      cursor: pointer;
+      text-decoration: none;
+      font-weight: 800;
+      transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+    }
+
+    .button:hover {
+      transform: translateY(-2px);
+    }
+
+    .button-primary {
+      color: white;
+      background: linear-gradient(145deg, #6f83a4, #4c5f7d);
+      box-shadow: 0 12px 26px rgba(76, 95, 125, 0.25);
+    }
+
+    .button-secondary {
+      color: var(--primary-dark);
+      background: var(--surface-strong);
+      border: 1px solid var(--border);
+    }
+
+    .hero-panel {
+      position: relative;
+      min-height: 390px;
+      padding: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.82);
+      border-radius: 34px;
+      background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(220, 229, 240, 0.9));
+      box-shadow: var(--shadow);
+    }
+
+    .hero-panel::before,
+    .hero-panel::after {
+      content: "";
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(2px);
+    }
+
+    .hero-panel::before {
+      width: 160px;
+      height: 160px;
+      top: 24px;
+      right: 28px;
+      background: rgba(95, 113, 143, 0.18);
+    }
+
+    .hero-panel::after {
+      width: 100px;
+      height: 100px;
+      left: 30px;
+      bottom: 24px;
+      background: rgba(180, 194, 214, 0.42);
+    }
+
+    .dashboard-card {
+      position: relative;
+      z-index: 1;
+      min-height: 342px;
+      padding: 24px;
+      border-radius: 26px;
+      color: white;
+      background:
+        linear-gradient(160deg, rgba(43, 57, 80, 0.98), rgba(91, 108, 143, 0.93)),
+        #34445f;
+      overflow: hidden;
+    }
+
+    .dashboard-card small {
+      color: rgba(255, 255, 255, 0.68);
+      font-weight: 700;
+    }
+
+    .dashboard-card h2 {
+      margin: 12px 0 10px;
+      font-size: 2rem;
+    }
+
+    .dashboard-card p {
+      color: rgba(255, 255, 255, 0.76);
+    }
+
+    .mini-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-top: 32px;
+    }
+
+    .mini-card {
+      min-height: 98px;
+      padding: 16px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 1.4rem;
+    }
+
+    section {
+      padding: 70px 0;
+    }
+
+    .section-heading {
+      display: flex;
+      align-items: end;
+      justify-content: space-between;
+      gap: 24px;
+      margin-bottom: 26px;
+    }
+
+    .section-heading h2 {
+      margin-bottom: 8px;
+      font-size: clamp(1.9rem, 4vw, 3rem);
+      letter-spacing: -0.04em;
+    }
+
+    .section-heading p {
+      max-width: 620px;
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 22px;
+    }
+
+    .card {
+      display: flex;
+      flex-direction: column;
+      min-width: 0;
+      overflow: hidden;
+      border: 1px solid rgba(220, 227, 236, 0.95);
+      border-radius: var(--radius);
+      background: var(--surface);
+      box-shadow: 0 12px 30px rgba(52, 68, 95, 0.08);
+      transition: transform 180ms ease, box-shadow 180ms ease;
+    }
+
+    .card:hover {
+      transform: translateY(-6px);
+      box-shadow: var(--shadow);
+    }
+
+    .card-image {
+      position: relative;
+      min-height: 190px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      color: white;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,.32), transparent 28%),
+        linear-gradient(145deg, #7185a6, #34445f);
+    }
+
+    .card-image.weapon {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.08), transparent),
+        linear-gradient(145deg, #485a77, #1f2c42);
+    }
+
+    .card-image.news {
+      background:
+        linear-gradient(145deg, rgba(255,255,255,.14), transparent),
+        linear-gradient(145deg, #8ca0bc, #4d607f);
+    }
+
+    .card-image.shop {
+      background:
+        radial-gradient(circle at 70% 20%, rgba(255,255,255,.24), transparent 22%),
+        linear-gradient(145deg, #8799b3, #536681);
+    }
+
+    .visual-icon {
+      font-size: 4.2rem;
+      filter: drop-shadow(0 10px 18px rgba(21, 31, 49, 0.28));
+    }
+
+    .card-body {
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      padding: 22px;
+    }
+
+    .tag {
+      width: fit-content;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: var(--primary-dark);
+      background: var(--primary-soft);
+      font-size: 0.78rem;
+      font-weight: 900;
+    }
+
+    .card h3 {
+      margin-bottom: 10px;
+      font-size: 1.25rem;
+    }
+
+    .card p {
+      flex: 1;
+      margin-bottom: 20px;
+      color: var(--muted);
+      overflow-wrap: anywhere;
+    }
+
+    .card button {
+      align-self: flex-start;
+    }
+
+    .notice {
+      margin-top: 24px;
+      padding: 15px 18px;
+      border: 1px dashed #b5c1d1;
+      border-radius: 16px;
+      color: var(--primary-dark);
+      background: rgba(220, 229, 240, 0.52);
+    }
+
+    footer {
+      padding: 34px 0 46px;
+      color: var(--muted);
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      left: 50%;
+      bottom: 28px;
+      z-index: 2000;
+      max-width: min(90vw, 480px);
+      padding: 14px 18px;
+      border-radius: 14px;
+      color: white;
+      background: #26354d;
+      box-shadow: 0 14px 30px rgba(22, 31, 46, 0.25);
+      opacity: 0;
+      pointer-events: none;
+      transform: translate(-50%, 18px);
+      transition: 200ms ease;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .toast.show {
+      opacity: 1;
+      transform: translate(-50%, 0);
+    }
+
+
+    .agent-image {
+      width: 100%;
+      height: 230px;
+      object-fit: contain;
+      object-position: center bottom;
+      filter: drop-shadow(0 18px 20px rgba(20, 29, 44, 0.35));
+      transition: transform 220ms ease;
+    }
+
+    .card:hover .agent-image {
+      transform: scale(1.045);
+    }
+
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      z-index: 3000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      background: rgba(18, 27, 42, 0.68);
+      backdrop-filter: blur(8px);
+    }
+
+    .modal-backdrop.open {
+      display: flex;
+    }
+
+    .modal {
+      width: min(760px, 100%);
+      max-height: min(86vh, 820px);
+      overflow-y: auto;
+      border: 1px solid rgba(255,255,255,.7);
+      border-radius: 26px;
+      background: #f8fafc;
+      box-shadow: 0 26px 80px rgba(10, 18, 32, 0.35);
+    }
+
+    .modal-hero {
+      position: relative;
+      min-height: 240px;
+      display: grid;
+      grid-template-columns: 1fr 0.8fr;
+      align-items: center;
+      gap: 20px;
+      padding: 30px;
+      overflow: hidden;
+      color: white;
+      background: linear-gradient(145deg, #435572, #7589aa);
+    }
+
+    .modal-hero img {
+      width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      filter: drop-shadow(0 18px 18px rgba(18, 27, 42, 0.35));
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 16px;
+      right: 16px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      cursor: pointer;
+      color: var(--primary-dark);
+      background: rgba(255,255,255,.94);
+      font-size: 1.2rem;
+      font-weight: 900;
+    }
+
+    .modal-content {
+      padding: 28px 30px 32px;
+    }
+
+    .guide-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 16px;
+      margin-top: 20px;
+    }
+
+    .guide-box {
+      padding: 18px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: white;
+    }
+
+    .guide-box h4 {
+      margin: 0 0 8px;
+      color: var(--primary-dark);
+    }
+
+    .guide-box p {
+      margin: 0;
+      color: var(--muted);
+    }
+
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    @media (max-width: 640px) {
+      .agent-image {
+        height: 205px;
+      }
+
+      .modal-hero {
+        grid-template-columns: 1fr;
+        padding: 58px 22px 22px;
+        text-align: center;
+      }
+
+      .modal-hero img {
+        max-height: 210px;
+      }
+
+      .modal-content {
+        padding: 22px;
+      }
+
+      .guide-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+
+
+
+    #weaponImageStatus {
+      margin-top: -14px;
+      color: var(--primary-dark);
+    }
+
+    .weapon-card[hidden] {
+      display: none;
+    }
+
+    .weapon-image-fallback {
+      display: none;
+      width: 100%;
+      min-height: 150px;
+      place-items: center;
+      padding: 16px;
+      color: white;
+      font-size: 1.35rem;
+      font-weight: 900;
+      text-align: center;
+    }
+
+    .weapon-card.image-error .weapon-image-fallback {
+      display: grid;
+    }
+
+    .weapon-card.image-error .weapon-visual img {
+      display: none;
+    }
+
+    .weapon-empty {
+      grid-column: 1 / -1;
+      padding: 30px;
+      border: 1px dashed var(--border);
+      border-radius: 18px;
+      color: var(--muted);
+      background: white;
+      text-align: center;
+    }
+
+    #agentImageStatus {
+      margin-top: -14px;
+      color: var(--primary-dark);
+    }
+    .agent-card.image-error .card-image {
+      background: linear-gradient(145deg, #6e7f9b, #334155);
+    }
+    .agent-card.image-error .image-fallback {
+      display: grid;
+    }
+
+    .filter-bar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 0 0 24px;
+    }
+    .filter-button {
+      padding: 10px 15px;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      cursor: pointer;
+      color: var(--primary-dark);
+      background: white;
+      font-weight: 800;
+    }
+    .filter-button.active {
+      color: white;
+      background: var(--primary-dark);
+    }
+    .agent-search {
+      width: 100%;
+      margin-bottom: 18px;
+      padding: 14px 16px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      color: var(--text);
+      background: white;
+      font: inherit;
+      outline: none;
+    }
+    .agent-search:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(95,113,143,.13);
+    }
+    .agent-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0,1fr));
+      gap: 18px;
+    }
+    .agent-card .card-image {
+      min-height: 210px;
+    }
+    .agent-card[hidden] {
+      display: none;
+    }
+    .image-fallback {
+      display: none;
+      width: 100%;
+      height: 210px;
+      place-items: center;
+      color: white;
+      font-size: 2rem;
+      font-weight: 900;
+    }
+    .weapon-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0,1fr));
+      gap: 20px;
+    }
+    .weapon-card {
+      display: grid;
+      grid-template-columns: 0.9fr 1.1fr;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: 0 12px 30px rgba(52,68,95,.08);
+    }
+    .weapon-visual {
+      min-height: 250px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      background: linear-gradient(145deg,#dce5f0,#7589aa);
+    }
+    .weapon-visual img {
+      width: 100%;
+      max-height: 150px;
+      object-fit: contain;
+      filter: drop-shadow(0 16px 14px rgba(22,31,46,.28));
+    }
+    .weapon-info {
+      padding: 22px;
+    }
+    .weapon-stats {
+      display: grid;
+      grid-template-columns: repeat(3,1fr);
+      gap: 8px;
+      margin: 16px 0;
+    }
+    .weapon-stat {
+      padding: 10px;
+      border-radius: 12px;
+      background: var(--primary-soft);
+      text-align: center;
+    }
+    .weapon-stat small,.weapon-stat strong {
+      display:block;
+    }
+    .weapon-detail {
+      display: none;
+      margin-top: 14px;
+      padding: 14px;
+      border-left: 4px solid var(--primary);
+      border-radius: 10px;
+      color: var(--muted);
+      background: #f3f6fa;
+    }
+    .weapon-card.expanded .weapon-detail {
+      display: block;
+    }
+    .results-count {
+      margin: -8px 0 20px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    @media(max-width:1000px){
+      .agent-grid{grid-template-columns:repeat(3,minmax(0,1fr))}
+      .weapon-grid{grid-template-columns:1fr}
+    }
+    @media(max-width:720px){
+      .agent-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+      .weapon-card{grid-template-columns:1fr}
+    }
+    @media(max-width:460px){
+      .agent-grid{grid-template-columns:1fr}
+      .weapon-stats{grid-template-columns:1fr}
+    }
+
+
+    .agent-library-toggle {
+      width: 100%;
+      margin: 4px 0 20px;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .agent-library-shell {
+      display: none;
+    }
+
+    .agent-library-shell.open {
+      display: block;
+    }
+
+    .agent-library-summary {
+      margin: 0 0 16px;
+      padding: 18px 20px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      color: var(--muted);
+      background: rgba(255, 255, 255, 0.75);
+    }
+
+
+    /* V0.3.5 武器展示修正：保留真實遊戲配色 */
+    .weapon-visual {
+      position: relative;
+      isolation: isolate;
+      min-height: 250px;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 46%, rgba(255,255,255,0.08), transparent 34%),
+        linear-gradient(145deg, #101722 0%, #1b2431 48%, #2a3442 100%);
+    }
+
+    .weapon-visual::before {
+      content: "";
+      position: absolute;
+      left: 8%;
+      right: 8%;
+      bottom: 14%;
+      height: 24%;
+      z-index: -1;
+      border-radius: 50%;
+      background: rgba(0, 0, 0, 0.5);
+      filter: blur(18px);
+    }
+
+    .weapon-visual::after {
+      content: "";
+      position: absolute;
+      inset: 12px;
+      z-index: -2;
+      border: 1px solid rgba(215, 224, 236, 0.09);
+      border-radius: 18px;
+      box-shadow: inset 0 0 40px rgba(255,255,255,0.025);
+    }
+
+    .weapon-visual img {
+      width: 92%;
+      max-height: 172px;
+      object-fit: contain;
+      opacity: 1;
+      mix-blend-mode: normal;
+      filter:
+        contrast(1.06)
+        saturate(1.04)
+        drop-shadow(0 1px 0 rgba(255,255,255,0.14))
+        drop-shadow(0 18px 18px rgba(0,0,0,0.66));
+      transition: transform 180ms ease, filter 180ms ease;
+    }
+
+    .weapon-card:hover .weapon-visual img {
+      transform: scale(1.045);
+      filter:
+        contrast(1.08)
+        saturate(1.06)
+        drop-shadow(0 1px 0 rgba(255,255,255,0.16))
+        drop-shadow(0 21px 21px rgba(0,0,0,0.72));
+    }
+
+    .weapon-card[data-weapon-category="近戰武器"] .weapon-visual img {
+      max-height: 194px;
+    }
+
+
+    .update-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      margin-bottom: 34px;
+    }
+
+    .update-card {
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      background: white;
+      box-shadow: 0 12px 30px rgba(52, 68, 95, 0.08);
+    }
+
+    .update-image {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      background: linear-gradient(145deg, #485c7b, #26364e);
+    }
+
+    .update-image img {
+      width: 100%;
+      height: 220px;
+      object-fit: contain;
+      object-position: center bottom;
+      filter: drop-shadow(0 16px 18px rgba(0,0,0,.34));
+    }
+
+    .weapon-update-image img {
+      width: 86%;
+      height: auto;
+      max-height: 135px;
+      object-position: center;
+    }
+
+    .update-copy {
+      padding: 22px;
+    }
+
+    .update-copy h3 {
+      margin-bottom: 10px;
+    }
+
+    .update-copy p {
+      margin-bottom: 0;
+      color: var(--muted);
+    }
+
+    .map-pool-panel {
+      padding: 26px;
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      background: rgba(255,255,255,.78);
+      box-shadow: 0 12px 30px rgba(52,68,95,.08);
+    }
+
+    .map-pool-heading h3 {
+      margin-bottom: 8px;
+      font-size: 1.55rem;
+    }
+
+    .map-pool-heading p {
+      color: var(--muted);
+    }
+
+    .map-selector {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 22px 0;
+    }
+
+    .map-choice {
+      padding: 10px 15px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      cursor: pointer;
+      color: var(--primary-dark);
+      background: white;
+      font-weight: 800;
+      transition: 160ms ease;
+    }
+
+    .map-choice:hover,
+    .map-choice.active {
+      color: white;
+      background: var(--primary-dark);
+      border-color: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .map-detail {
+      display: grid;
+      grid-template-columns: .9fr 1.1fr;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      background: white;
+    }
+
+    .map-detail-image {
+      min-height: 250px;
+      background: linear-gradient(145deg, #dce5f0, #7387a7);
+    }
+
+    .map-detail-image img {
+      width: 100%;
+      height: 100%;
+      min-height: 250px;
+      object-fit: cover;
+    }
+
+    .map-detail-copy {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 26px;
+    }
+
+    .map-status {
+      width: fit-content;
+      margin-bottom: 12px;
+      padding: 6px 10px;
+      border-radius: 999px;
+      color: #2f5e48;
+      background: #e3f3e9;
+      font-size: .82rem;
+      font-weight: 900;
+    }
+
+    .map-detail-copy p,
+    .map-note {
+      color: var(--muted);
+    }
+
+    .map-note {
+      margin: 18px 0 0;
+      font-size: .92rem;
+    }
+
+
+    .skin-browser {
+      display: grid;
+      grid-template-columns: 250px minmax(0, 1fr);
+      gap: 22px;
+      align-items: start;
+    }
+
+    .skin-weapon-list,
+    .skin-ranking-panel {
+      border: 1px solid var(--border);
+      border-radius: 22px;
+      background: rgba(255,255,255,.88);
+      box-shadow: 0 12px 30px rgba(52,68,95,.08);
+    }
+
+    .skin-weapon-list {
+      display: grid;
+      gap: 8px;
+      padding: 14px;
+      position: sticky;
+      top: calc(var(--nav-height) + 18px);
+    }
+
+    .skin-weapon-button {
+      width: 100%;
+      padding: 12px 14px;
+      border: 1px solid transparent;
+      border-radius: 13px;
+      cursor: pointer;
+      color: var(--primary-dark);
+      background: transparent;
+      text-align: left;
+      font-weight: 800;
+      transition: 160ms ease;
+    }
+
+    .skin-weapon-button:hover,
+    .skin-weapon-button.active {
+      color: white;
+      background: var(--primary-dark);
+    }
+
+    .skin-loading {
+      margin: 0;
+      padding: 12px;
+      color: var(--muted);
+    }
+
+    .skin-ranking-panel {
+      padding: 24px;
+    }
+
+    .skin-ranking-heading {
+      margin-bottom: 20px;
+    }
+
+    .skin-ranking-heading h3 {
+      margin: 10px 0 6px;
+      font-size: 1.75rem;
+    }
+
+    .skin-ranking-heading p,
+    .skin-disclaimer {
+      color: var(--muted);
+    }
+
+    .skin-ranking-list {
+      display: grid;
+      gap: 12px;
+    }
+
+    .skin-rank-item {
+      display: grid;
+      grid-template-columns: 52px 140px minmax(0, 1fr) 70px;
+      gap: 16px;
+      align-items: center;
+      padding: 14px;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      background: white;
+    }
+
+    .skin-rank-number {
+      display: grid;
+      place-items: center;
+      width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      color: white;
+      background: var(--primary-dark);
+      font-weight: 900;
+    }
+
+    .skin-rank-image {
+      height: 74px;
+      display: grid;
+      place-items: center;
+      overflow: hidden;
+      border-radius: 12px;
+      background: linear-gradient(145deg,#182231,#34445f);
+    }
+
+    .skin-rank-image img {
+      width: 92%;
+      max-height: 62px;
+      object-fit: contain;
+      filter: drop-shadow(0 10px 10px rgba(0,0,0,.48));
+    }
+
+    .skin-rank-copy h4 {
+      margin: 0 0 4px;
+    }
+
+    .skin-rank-copy p {
+      margin: 0;
+      color: var(--muted);
+      font-size: .9rem;
+    }
+
+    .skin-rate {
+      text-align: right;
+      color: var(--primary-dark);
+      font-size: 1.08rem;
+      font-weight: 900;
+    }
+
+    .skin-rate-bar {
+      grid-column: 3 / 5;
+      height: 7px;
+      overflow: hidden;
+      border-radius: 999px;
+      background: var(--primary-soft);
+    }
+
+    .skin-rate-fill {
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg,#536681,#91a3bd);
+    }
+
+    .skin-disclaimer {
+      margin: 18px 0 0;
+      font-size: .85rem;
+    }
+
+    @media (max-width: 800px) {
+      .skin-browser {
+        grid-template-columns: 1fr;
+      }
+      .skin-weapon-list {
+        position: static;
+        grid-template-columns: repeat(2,minmax(0,1fr));
+      }
+      .skin-rank-item {
+        grid-template-columns: 44px 100px minmax(0,1fr);
+      }
+      .skin-rate {
+        grid-column: 3;
+      }
+      .skin-rate-bar {
+        grid-column: 2 / 4;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .skin-weapon-list {
+        grid-template-columns: 1fr;
+      }
+      .skin-rank-item {
+        grid-template-columns: 42px minmax(0,1fr) 58px;
+      }
+      .skin-rank-image {
+        grid-column: 1 / 4;
+        height: 96px;
+      }
+      .skin-rank-copy {
+        grid-column: 2;
+      }
+      .skin-rate {
+        grid-column: 3;
+      }
+      .skin-rate-bar {
+        grid-column: 1 / 4;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .update-grid {
+        grid-template-columns: 1fr;
+      }
+      .map-detail {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 900px) {
+      .desktop-nav {
+        display: none;
+      }
+
+      .menu-button {
+        display: grid;
+        place-items: center;
+      }
+
+      .mobile-nav {
+        position: absolute;
+        top: calc(var(--nav-height) - 4px);
+        left: 20px;
+        right: 20px;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.98);
+        box-shadow: var(--shadow);
+      }
+
+      .mobile-nav.open {
+        display: grid;
+        gap: 6px;
+      }
+
+      .mobile-nav a {
+        padding: 12px 14px;
+      }
+
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-panel {
+        min-height: auto;
+      }
+
+      .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --nav-height: 68px;
+      }
+
+      .container {
+        width: min(100% - 28px, 1180px);
+      }
+
+      .brand-mark {
+        width: 38px;
+        height: 38px;
+      }
+
+      .hero {
+        padding: 58px 0 24px;
+      }
+
+      h1 {
+        font-size: clamp(2.7rem, 17vw, 4.4rem);
+      }
+
+      .hero-actions {
+        display: grid;
+      }
+
+      .button {
+        width: 100%;
+      }
+
+      .hero-panel {
+        padding: 14px;
+        border-radius: 26px;
+      }
+
+      .dashboard-card {
+        min-height: 320px;
+      }
+
+      .mini-grid {
+        grid-template-columns: 1fr;
+      }
+
+      section {
+        padding: 52px 0;
+      }
+
+      .section-heading {
+        display: block;
+      }
+
+      .cards {
+        grid-template-columns: 1fr;
+      }
+
+      .card-image {
+        min-height: 176px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      html {
+        scroll-behavior: auto;
+      }
+
+      *,
+      *::before,
+      *::after {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="container nav-wrap">
+      <a class="brand" href="#top" aria-label="回到首頁頂端">
+        <span class="brand-mark">V</span>
+        <span>ValorHub</span>
+      </a>
+
+      <nav class="desktop-nav" aria-label="主要導覽">
+        <a href="#top">首頁</a>
+        <a href="#guides">熱門攻略</a>
+        <a href="#weapons">武器資料</a>
+        <a href="#news">最新公告</a>
+        <a href="#shop">精選造型</a>
+      </nav>
+
+      <button class="menu-button" id="menuButton" type="button" aria-label="開啟導覽選單" aria-expanded="false">
+        ☰
+      </button>
+
+      <nav class="mobile-nav" id="mobileNav" aria-label="手機版主要導覽">
+        <a href="#top">首頁</a>
+        <a href="#guides">熱門攻略</a>
+        <a href="#weapons">武器資料</a>
+        <a href="#news">最新公告</a>
+        <a href="#shop">精選造型</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <span class="eyebrow">🎮 VALORANT 玩家資訊中心</span>
+          <h1>攻略、武器與情報，一站掌握。</h1>
+          <p>
+            ValorHub 提供簡潔清楚的熱門攻略、武器資料、版本公告與每日商店展示，
+            讓玩家在手機與電腦上都能快速找到需要的內容。
+          </p>
+          <div class="hero-actions">
+            <a class="button button-primary" href="#guides">查看熱門攻略</a>
+            <button class="button button-secondary" type="button" data-message="搜尋功能將於後續版本開放。">
+              搜尋網站
+            </button>
+          </div>
+        </div>
+
+        <div class="hero-panel" aria-label="ValorHub 平台摘要">
+          <div class="dashboard-card">
+            <small>VALORHUB OVERVIEW</small>
+            <h2>你的對戰前情報站</h2>
+            <p>先讀攻略、再看武器，快速完成今天的遊戲準備。</p>
+            <div class="mini-grid">
+              <div class="mini-card">
+                <strong>29</strong>
+                <span>完整特務攻略</span>
+              </div>
+              <div class="mini-card">
+                <strong>18</strong>
+                <span>常用武器資料</span>
+              </div>
+              <div class="mini-card">
+                <strong>4</strong>
+                <span>首頁核心區塊</span>
+              </div>
+              <div class="mini-card">
+                <strong>RWD</strong>
+                <span>手機電腦皆適用</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="guides">
+      <div class="container">
+        <div class="section-heading">
+          <div><span class="eyebrow">全部特務攻略</span><h2>29 位特務攻略導覽</h2></div>
+          <p>依官方目前特務名單整理，可依角色定位篩選或輸入中英文名稱搜尋。</p>
+        </div>
+        <p class="agent-library-summary">請選擇特務類別查看攻略。</p>
+        <button class="button button-primary agent-library-toggle" id="agentLibraryToggle" type="button" aria-expanded="true" aria-controls="agentLibraryShell"><span>全部特務</span><span id="agentLibraryToggleIcon">－</span></button>
+        <div class="agent-library-shell open" id="agentLibraryShell">
+        <input class="agent-search" id="agentSearch" type="search" placeholder="搜尋特務，例如：Jett、婕提、控場者" aria-label="搜尋特務">
+        <div class="filter-bar" aria-label="特務定位篩選">
+          <button class="filter-button active" type="button" data-role-filter="決鬥者">決鬥者</button>
+          <button class="filter-button" type="button" data-role-filter="先鋒">先鋒</button>
+          <button class="filter-button" type="button" data-role-filter="控場者">控場者</button>
+          <button class="filter-button" type="button" data-role-filter="守衛">守衛</button>
+        </div>
+        <p class="results-count" id="agentCount">顯示 29 位特務</p><p class="results-count" id="agentImageStatus" aria-live="polite">正在核對特務圖片…</p>
+        <div class="agent-grid">
+          
+      <article class="card agent-card" data-role="控場者" data-search="astra 雅星">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="雅星 Astra 角色圖片" loading="lazy" data-agent-image="Astra">
+          <div class="image-fallback">AS</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">控場者</span>
+          <h3>雅星 <small>Astra</small></h3>
+          <p>以星體技能遠端控制戰場，適合先規劃再執行的玩家。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Astra" data-zh="雅星" data-role="控場者"
+            data-desc="以星體技能遠端控制戰場，適合先規劃再執行的玩家。" data-tip="先放星體預留控制點，配合隊友進攻時間再啟動；避免過早用完資源。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="先鋒" data-search="breach 布蕾琪">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="布蕾琪 Breach 角色圖片" loading="lazy" data-agent-image="Breach">
+          <div class="image-fallback">BR</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">先鋒</span>
+          <h3>布蕾琪 <small>Breach</small></h3>
+          <p>隔牆暈眩與閃光能力強，能替隊友打開狹窄區域。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Breach" data-zh="布蕾琪" data-role="先鋒"
+            data-desc="隔牆暈眩與閃光能力強，能替隊友打開狹窄區域。" data-tip="技能施放前先報點，讓隊友能同步進場；不要閃到自己人。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="控場者" data-search="brimstone 布史東">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="布史東 Brimstone 角色圖片" loading="lazy" data-agent-image="Brimstone">
+          <div class="image-fallback">BR</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">控場者</span>
+          <h3>布史東 <small>Brimstone</small></h3>
+          <p>操作直接、煙霧穩定，適合建立基礎控場觀念。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Brimstone" data-zh="布史東" data-role="控場者"
+            data-desc="操作直接、煙霧穩定，適合建立基礎控場觀念。" data-tip="煙霧要貼齊入口，燃燒彈保留給拖延拆包或封鎖退路。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="守衛" data-search="chamber 錢博爾">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="錢博爾 Chamber 角色圖片" loading="lazy" data-agent-image="Chamber">
+          <div class="image-fallback">CH</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">守衛</span>
+          <h3>錢博爾 <small>Chamber</small></h3>
+          <p>以精準槍法與傳送能力守住關鍵角度。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Chamber" data-zh="錢博爾" data-role="守衛"
+            data-desc="以精準槍法與傳送能力守住關鍵角度。" data-tip="先設置安全撤退點再架槍，避免傳送點離交戰區太遠。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="控場者" data-search="clove 暮蝶">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="暮蝶 Clove 角色圖片" loading="lazy" data-agent-image="Clove">
+          <div class="image-fallback">CL</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">控場者</span>
+          <h3>暮蝶 <small>Clove</small></h3>
+          <p>倒下後仍能影響戰局，適合主動參與交戰的控場玩家。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Clove" data-zh="暮蝶" data-role="控場者"
+            data-desc="倒下後仍能影響戰局，適合主動參與交戰的控場玩家。" data-tip="進場前仍要先完成關鍵煙位；復活技能要評估能否安全撤離。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="守衛" data-search="cypher 瑟符">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="瑟符 Cypher 角色圖片" loading="lazy" data-agent-image="Cypher">
+          <div class="image-fallback">CY</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">守衛</span>
+          <h3>瑟符 <small>Cypher</small></h3>
+          <p>透過攝影機、絆線與牢籠掌握側翼資訊。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Cypher" data-zh="瑟符" data-role="守衛"
+            data-desc="透過攝影機、絆線與牢籠掌握側翼資訊。" data-tip="陷阱位置要定期變化，攝影機優先提供持續資訊而非急著標記。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="守衛" data-search="deadlock 蒂妲洛克">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="蒂妲洛克 Deadlock 角色圖片" loading="lazy" data-agent-image="Deadlock">
+          <div class="image-fallback">DE</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">守衛</span>
+          <h3>蒂妲洛克 <small>Deadlock</small></h3>
+          <p>擅長封鎖通道與限制敵人的移動選擇。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Deadlock" data-zh="蒂妲洛克" data-role="守衛"
+            data-desc="擅長封鎖通道與限制敵人的移動選擇。" data-tip="聲感陷阱放在敵人必須製造聲音的位置，牆體用來分割敵隊。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="先鋒" data-search="fade 菲德">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="菲德 Fade 角色圖片" loading="lazy" data-agent-image="Fade">
+          <div class="image-fallback">FA</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">先鋒</span>
+          <h3>菲德 <small>Fade</small></h3>
+          <p>使用夢魘能力追蹤敵人並限制躲藏空間。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Fade" data-zh="菲德" data-role="先鋒"
+            data-desc="使用夢魘能力追蹤敵人並限制躲藏空間。" data-tip="先用偵查確認大致位置，再用束縛或獵獸逼迫敵人離開掩體。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="先鋒" data-search="gekko 蓋可">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="蓋可 Gekko 角色圖片" loading="lazy" data-agent-image="Gekko">
+          <div class="image-fallback">GE</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">先鋒</span>
+          <h3>蓋可 <small>Gekko</small></h3>
+          <p>技能可以回收重複使用，具備偵查與下包支援能力。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Gekko" data-zh="蓋可" data-role="先鋒"
+            data-desc="技能可以回收重複使用，具備偵查與下包支援能力。" data-tip="回收技能前先確認安全，讓小翼下包時要替它清除近點威脅。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="控場者" data-search="harbor 哈泊">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="哈泊 Harbor 角色圖片" loading="lazy" data-agent-image="Harbor">
+          <div class="image-fallback">HA</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">控場者</span>
+          <h3>哈泊 <small>Harbor</small></h3>
+          <p>以水牆快速切割長距離視線，適合動態推進。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Harbor" data-zh="哈泊" data-role="控場者"
+            data-desc="以水牆快速切割長距離視線，適合動態推進。" data-tip="水牆要跟著隊伍推進路線彎曲，護盾球不可視為永久安全區。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="決鬥者" data-search="iso 壹決">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="壹決 Iso 角色圖片" loading="lazy" data-agent-image="Iso">
+          <div class="image-fallback">IS</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">決鬥者</span>
+          <h3>壹決 <small>Iso</small></h3>
+          <p>強調單挑與護盾交換，適合槍法穩定的玩家。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Iso" data-zh="壹決" data-role="決鬥者"
+            data-desc="強調單挑與護盾交換，適合槍法穩定的玩家。" data-tip="先取得護盾再尋找下一場對槍，大絕前確認隊友能控制外部戰場。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="決鬥者" data-search="jett 婕提">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="婕提 Jett 角色圖片" loading="lazy" data-agent-image="Jett">
+          <div class="image-fallback">JE</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">決鬥者</span>
+          <h3>婕提 <small>Jett</small></h3>
+          <p>以高速位移創造第一個交戰與進場空間。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Jett" data-zh="婕提" data-role="決鬥者"
+            data-desc="以高速位移創造第一個交戰與進場空間。" data-tip="隊友提供閃光或偵查後再衝刺進點，落地位置要有掩體可用。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="先鋒" data-search="kay/o KAY/O">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="KAY/O KAY/O 角色圖片" loading="lazy" data-agent-image="KAY/O">
+          <div class="image-fallback">KA</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">先鋒</span>
+          <h3>KAY/O <small>KAY/O</small></h3>
+          <p>能壓制敵方技能，降低進點時的技能威脅。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="KAY/O" data-zh="KAY/O" data-role="先鋒"
+            data-desc="能壓制敵方技能，降低進點時的技能威脅。" data-tip="飛刀要覆蓋關鍵區域，閃光需依隊友距離選擇高拋或快速投擲。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="守衛" data-search="killjoy 愷宙">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="愷宙 Killjoy 角色圖片" loading="lazy" data-agent-image="Killjoy">
+          <div class="image-fallback">KI</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">守衛</span>
+          <h3>愷宙 <small>Killjoy</small></h3>
+          <p>使用機器人與奈米蜂群守點，擅長區域控制。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Killjoy" data-zh="愷宙" data-role="守衛"
+            data-desc="使用機器人與奈米蜂群守點，擅長區域控制。" data-tip="砲塔主要用來提供資訊，奈米蜂群要藏在敵人不易提前破壞的位置。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="控場者" data-search="miks Miks">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="Miks Miks 角色圖片" loading="lazy" data-agent-image="Miks">
+          <div class="image-fallback">MI</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">控場者</span>
+          <h3>Miks <small>Miks</small></h3>
+          <p>以聲音能量強化隊友並調整戰鬥節奏。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Miks" data-zh="Miks" data-role="控場者"
+            data-desc="以聲音能量強化隊友並調整戰鬥節奏。" data-tip="增益技能要配合主要輸出者，控制與治療模式需依交戰狀況切換。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="決鬥者" data-search="neon 霓虹">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="霓虹 Neon 角色圖片" loading="lazy" data-agent-image="Neon">
+          <div class="image-fallback">NE</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">決鬥者</span>
+          <h3>霓虹 <small>Neon</small></h3>
+          <p>高速奔跑與滑行能快速突破防線。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Neon" data-zh="霓虹" data-role="決鬥者"
+            data-desc="高速奔跑與滑行能快速突破防線。" data-tip="進場路線要先規劃，滑行後立即清角，避免只靠速度直線衝入。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="控場者" data-search="omen 歐門">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="歐門 Omen 角色圖片" loading="lazy" data-agent-image="Omen">
+          <div class="image-fallback">OM</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">控場者</span>
+          <h3>歐門 <small>Omen</small></h3>
+          <p>煙霧、致盲與傳送能製造大量不確定性。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Omen" data-zh="歐門" data-role="控場者"
+            data-desc="煙霧、致盲與傳送能製造大量不確定性。" data-tip="煙霧邊緣貼齊入口，傳送以改變位置為主，不要每回合都追求背刺。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="決鬥者" data-search="phoenix 菲尼克斯">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="菲尼克斯 Phoenix 角色圖片" loading="lazy" data-agent-image="Phoenix">
+          <div class="image-fallback">PH</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">決鬥者</span>
+          <h3>菲尼克斯 <small>Phoenix</small></h3>
+          <p>具備閃光、自補與安全試探的大絕，適合正面推進。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Phoenix" data-zh="菲尼克斯" data-role="決鬥者"
+            data-desc="具備閃光、自補與安全試探的大絕，適合正面推進。" data-tip="閃光要利用牆角快速彈出，大絕啟動前確保返回位置不會被埋伏。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="決鬥者" data-search="raze 芮茲">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="芮茲 Raze 角色圖片" loading="lazy" data-agent-image="Raze">
+          <div class="image-fallback">RA</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">決鬥者</span>
+          <h3>芮茲 <small>Raze</small></h3>
+          <p>爆破技能能清除死角並快速取得空間。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Raze" data-zh="芮茲" data-role="決鬥者"
+            data-desc="爆破技能能清除死角並快速取得空間。" data-tip="手榴彈優先逼退固定點位，炸藥包移動要先練習落點與槍枝切換。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="決鬥者" data-search="reyna 蕾娜">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="蕾娜 Reyna 角色圖片" loading="lazy" data-agent-image="Reyna">
+          <div class="image-fallback">RE</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">決鬥者</span>
+          <h3>蕾娜 <small>Reyna</small></h3>
+          <p>擊殺後能治療或脫離，極度依賴個人槍法。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Reyna" data-zh="蕾娜" data-role="決鬥者"
+            data-desc="擊殺後能治療或脫離，極度依賴個人槍法。" data-tip="進場仍需隊友技能支援，靈魂球要依血量和敵人數量選擇治療或無敵。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="守衛" data-search="sage 聖祈">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="聖祈 Sage 角色圖片" loading="lazy" data-agent-image="Sage">
+          <div class="image-fallback">SA</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">守衛</span>
+          <h3>聖祈 <small>Sage</small></h3>
+          <p>治療、減速與冰牆能拖延進攻並保護隊友。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Sage" data-zh="聖祈" data-role="守衛"
+            data-desc="治療、減速與冰牆能拖延進攻並保護隊友。" data-tip="冰牆要創造時間或高低差，復活前先封鎖敵人視線並清理附近角落。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="先鋒" data-search="skye 絲凱">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="絲凱 Skye 角色圖片" loading="lazy" data-agent-image="Skye">
+          <div class="image-fallback">SK</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">先鋒</span>
+          <h3>絲凱 <small>Skye</small></h3>
+          <p>可控閃光同時提供命中資訊，兼具偵查與支援。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Skye" data-zh="絲凱" data-role="先鋒"
+            data-desc="可控閃光同時提供命中資訊，兼具偵查與支援。" data-tip="閃光爆開前聽取命中提示，獵犬主要清近點並讓隊友緊跟。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="先鋒" data-search="sova 蘇法">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="蘇法 Sova 角色圖片" loading="lazy" data-agent-image="Sova">
+          <div class="image-fallback">SO</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">先鋒</span>
+          <h3>蘇法 <small>Sova</small></h3>
+          <p>偵查箭與無人機能降低未知資訊。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Sova" data-zh="蘇法" data-role="先鋒"
+            data-desc="偵查箭與無人機能降低未知資訊。" data-tip="技能命中後隊友要立即跟進；箭點位應理解用途，不只死背固定套路。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="先鋒" data-search="tejo Tejo">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="Tejo Tejo 角色圖片" loading="lazy" data-agent-image="Tejo">
+          <div class="image-fallback">TE</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">先鋒</span>
+          <h3>Tejo <small>Tejo</small></h3>
+          <p>利用導引火力迫使敵人讓出陣地。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Tejo" data-zh="Tejo" data-role="先鋒"
+            data-desc="利用導引火力迫使敵人讓出陣地。" data-tip="先確認敵人可能位置再標記轟炸路線，無人機資訊要配合隊伍推進。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="守衛" data-search="veto Veto">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="Veto Veto 角色圖片" loading="lazy" data-agent-image="Veto">
+          <div class="image-fallback">VE</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">守衛</span>
+          <h3>Veto <small>Veto</small></h3>
+          <p>能限制敵人並破壞部分技能，迫使戰鬥回歸槍法。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Veto" data-zh="Veto" data-role="守衛"
+            data-desc="能限制敵人並破壞部分技能，迫使戰鬥回歸槍法。" data-tip="攔截裝置放在關鍵防守區，束縛陷阱用於敵人難以繞開的入口。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="控場者" data-search="viper 薇蝮">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="薇蝮 Viper 角色圖片" loading="lazy" data-agent-image="Viper">
+          <div class="image-fallback">VI</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">控場者</span>
+          <h3>薇蝮 <small>Viper</small></h3>
+          <p>毒牆與毒霧可重複控制大型區域。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Viper" data-zh="薇蝮" data-role="控場者"
+            data-desc="毒牆與毒霧可重複控制大型區域。" data-tip="燃料要分段使用，毒牆方向需同時考慮進攻切割與回防需求。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="守衛" data-search="vyse 薇絲">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="薇絲 Vyse 角色圖片" loading="lazy" data-agent-image="Vyse">
+          <div class="image-fallback">VY</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">守衛</span>
+          <h3>薇絲 <small>Vyse</small></h3>
+          <p>以金屬陷阱分割敵隊並懲罰快速進攻。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Vyse" data-zh="薇絲" data-role="守衛"
+            data-desc="以金屬陷阱分割敵隊並懲罰快速進攻。" data-tip="陷阱要讓第一名與後續隊友脫節，技能啟動後立即集中火力處理被隔離者。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="決鬥者" data-search="waylay 幻稜">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="幻稜 Waylay 角色圖片" loading="lazy" data-agent-image="Waylay">
+          <div class="image-fallback">WA</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">決鬥者</span>
+          <h3>幻稜 <small>Waylay</small></h3>
+          <p>化身光線高速進出戰場並妨礙敵人移動。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Waylay" data-zh="幻稜" data-role="決鬥者"
+            data-desc="化身光線高速進出戰場並妨礙敵人移動。" data-tip="進場前設定可返回的位置，緩速技能用來降低敵人反應與追擊能力。" data-img="">查看攻略</button>
+        </div>
+      </article>
+      <article class="card agent-card" data-role="決鬥者" data-search="yoru 夜戮">
+        <div class="card-image">
+          <img class="agent-image" src="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22600%22 height=%22400%22%3E%3Crect width=%22100%25%22 height=%22100%25%22 fill=%22%237589aa%22/%3E%3C/svg%3E" alt="夜戮 Yoru 角色圖片" loading="lazy" data-agent-image="Yoru">
+          <div class="image-fallback">YO</div>
+        </div>
+        <div class="card-body">
+          <span class="tag">決鬥者</span>
+          <h3>夜戮 <small>Yoru</small></h3>
+          <p>以假動作、傳送與隱形創造欺敵機會。</p>
+          <button class="button button-primary agent-guide-button" type="button"
+            data-agent="Yoru" data-zh="夜戮" data-role="決鬥者"
+            data-desc="以假動作、傳送與隱形創造欺敵機會。" data-tip="先用聲音與假身混淆判斷，傳送點要兼顧進攻用途與安全退路。" data-img="">查看攻略</button>
+        </div>
+      </article>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="weapons">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">全部武器資料</span>
+            <h2>依類別查看完整軍火庫</h2>
+          </div>
+          <p>武器圖片會先完成載入驗證，再顯示於卡片；可使用下方類別快速篩選。</p>
+        </div>
+        <p class="agent-library-summary">請選擇武器類別查看資料。</p>
+        <button class="button button-primary agent-library-toggle" id="weaponLibraryToggle" type="button" aria-expanded="true" aria-controls="weaponLibraryShell"><span>全部軍火庫</span><span id="weaponLibraryToggleIcon">－</span></button>
+        <div class="agent-library-shell open" id="weaponLibraryShell">
+
+        <div class="filter-bar" id="weaponFilters" aria-label="武器類別篩選">
+          <button class="filter-button active" type="button" data-weapon-filter="隨身武器">隨身武器</button>
+          <button class="filter-button" type="button" data-weapon-filter="衝鋒槍">衝鋒槍</button>
+          <button class="filter-button" type="button" data-weapon-filter="霰彈槍">霰彈槍</button>
+          <button class="filter-button" type="button" data-weapon-filter="步槍">步槍</button>
+          <button class="filter-button" type="button" data-weapon-filter="狙擊槍">狙擊槍</button>
+          <button class="filter-button" type="button" data-weapon-filter="重型武器">重型武器</button>
+          <button class="filter-button" type="button" data-weapon-filter="近戰武器">近戰武器</button>
+        </div>
+
+        <p class="results-count" id="weaponCount">正在取得武器資料…</p>
+        <p class="results-count" id="weaponImageStatus" aria-live="polite">正在核對武器圖片…</p>
+
+        <div class="weapon-grid" id="weaponGrid">
+          <div class="notice">正在載入完整武器資料。</div>
+        </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="news">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">版本與遊戲資訊</span>
+            <h2>13.01 白話懶人包</h2>
+          </div>
+          <p>依 Riot 官方 2026 年 7 月 14 日更新整理，只保留玩家最需要知道的重點。</p>
+        </div>
+
+        <div class="update-grid">
+          <article class="update-card">
+            <div class="update-image">
+              <img data-update-agent="Iso" alt="離索 Iso 特務圖片" loading="lazy">
+            </div>
+            <div class="update-copy">
+              <span class="tag">特務增強</span>
+              <h3>離索：護盾結束後更快拿回武器</h3>
+              <p>簡單說，解除「雙源」後不會再有明顯的拿槍空窗，接下一場對槍會更順。</p>
+            </div>
+          </article>
+
+          <article class="update-card">
+            <div class="update-image">
+              <img data-update-agent="Yoru" alt="夜戮 Yoru 特務圖片" loading="lazy">
+            </div>
+            <div class="update-copy">
+              <span class="tag">特務增強</span>
+              <h3>夜戮：傳送信標能留更久</h3>
+              <p>「不請自來」的信標從 15 秒延長到 20 秒，能更晚決定要不要傳送，欺敵空間更大。</p>
+            </div>
+          </article>
+
+          <article class="update-card">
+            <div class="update-image weapon-update-image">
+              <img data-update-weapon="Outlaw" alt="逃犯 Outlaw 武器圖片" loading="lazy">
+            </div>
+            <div class="update-copy">
+              <span class="tag">武器調整</span>
+              <h3>逃犯：第二發不能再無腦連點</h3>
+              <p>第一發後的準度與後座力變差，仍能快速補第二槍，但玩家需要更會控制節奏。</p>
+            </div>
+          </article>
+        </div>
+
+        <div class="map-pool-panel">
+          <div class="map-pool-heading">
+            <div>
+              <span class="eyebrow">競技地圖池</span>
+              <h3>點選地圖查看輪替狀態</h3>
+              <p>目前地圖池依 13.00 輪替整理；選取地圖後會顯示簡短說明。</p>
+            </div>
+          </div>
+
+          <div class="map-selector" id="mapSelector" aria-label="競技地圖選擇">
+            <button class="map-choice active" type="button" data-map="Summit">頂峰亭閣</button>
+            <button class="map-choice" type="button" data-map="Sunset">日落之城</button>
+            <button class="map-choice" type="button" data-map="Ascent">義境空島</button>
+            <button class="map-choice" type="button" data-map="Lotus">蓮華古城</button>
+            <button class="map-choice" type="button" data-map="Haven">遺落境地</button>
+            <button class="map-choice" type="button" data-map="Icebox">極地寒港</button>
+            <button class="map-choice" type="button" data-map="Split">雙塔迷城</button>
+          </div>
+
+          <article class="map-detail" id="mapDetail">
+            <div class="map-detail-image">
+              <img id="mapDetailImage" alt="頂峰亭閣地圖圖片">
+            </div>
+            <div class="map-detail-copy">
+              <span class="map-status">● 目前輪替中</span>
+              <h3 id="mapDetailName">頂峰亭閣 Summit</h3>
+              <p id="mapDetailText">13.00 新加入競技地圖池。特色是可在回合中改變戰場配置的活動牆體。</p>
+            </div>
+          </article>
+
+          <p class="map-note">13.00 中，頂峰亭閣與日落之城加入；天漠之峽與深海遺珠移出。</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="shop">
+      <div class="container">
+        <div class="section-heading">
+          <div>
+            <span class="eyebrow">精選槍枝造型</span>
+            <h2>依武器類別查看人氣造型</h2>
+          </div>
+          <p>選擇武器類別與槍枝後，可查看前 7 名造型。人氣占比為社群偏好整理，不代表 Riot 官方實際使用率。</p>
+        </div>
+
+        <div class="filter-bar" id="skinCategoryFilters" aria-label="造型武器類別">
+          <button class="filter-button active" type="button" data-skin-category="隨身武器">隨身武器</button>
+          <button class="filter-button" type="button" data-skin-category="衝鋒槍">衝鋒槍</button>
+          <button class="filter-button" type="button" data-skin-category="霰彈槍">霰彈槍</button>
+          <button class="filter-button" type="button" data-skin-category="步槍">步槍</button>
+          <button class="filter-button" type="button" data-skin-category="狙擊槍">狙擊槍</button>
+          <button class="filter-button" type="button" data-skin-category="重型武器">重型武器</button>
+        </div>
+
+        <div class="skin-browser">
+          <aside class="skin-weapon-list" id="skinWeaponList" aria-label="選擇槍枝">
+            <p class="skin-loading">正在載入槍枝造型資料…</p>
+          </aside>
+
+          <div class="skin-ranking-panel">
+            <div class="skin-ranking-heading">
+              <div>
+                <span class="tag">社群人氣排行</span>
+                <h3 id="skinRankingTitle">請選擇槍枝</h3>
+                <p id="skinRankingDescription">將顯示該槍枝前 7 名人氣造型。</p>
+              </div>
+            </div>
+            <div class="skin-ranking-list" id="skinRankingList">
+              <div class="notice">造型資料載入完成後，第一把隨身武器會自動顯示。</div>
+            </div>
+            <p class="skin-disclaimer">
+              「人氣占比」是依公開社群排行常見順序製作的相對指數，僅供快速比較，並非 Riot 公布的玩家裝備率。
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container">
+      ValorHub V0.3.9 · 精選造型排行 · 灰藍簡約風格
+    </div>
+  </footer>
+
+
+  <div class="modal-backdrop" id="guideModal" aria-hidden="true">
+    <section class="modal" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+      <div class="modal-hero">
+        <button class="modal-close" id="modalClose" type="button" aria-label="關閉攻略">✕</button>
+        <div>
+          <span class="eyebrow" id="modalRole">特務攻略</span>
+          <h2 id="modalTitle">攻略標題</h2>
+          <p id="modalIntro">攻略介紹</p>
+        </div>
+        <img id="modalImage" src="" alt="">
+      </div>
+      <div class="modal-content">
+        <div class="guide-grid" id="guideDetails"></div>
+      </div>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script>
+    const menuButton = document.getElementById("menuButton");
+    const mobileNav = document.getElementById("mobileNav");
+    const toast = document.getElementById("toast");
+    const guideModal = document.getElementById("guideModal");
+    const modalClose = document.getElementById("modalClose");
+    const agentSearch = document.getElementById("agentSearch");
+    const agentCards = [...document.querySelectorAll(".agent-card")];
+    const agentCount = document.getElementById("agentCount");
+    const agentImageStatus = document.getElementById("agentImageStatus");
+    const agentLibraryToggle = document.getElementById("agentLibraryToggle");
+    const agentLibraryShell = document.getElementById("agentLibraryShell");
+    const agentLibraryToggleIcon = document.getElementById("agentLibraryToggleIcon");
+    const weaponGrid = document.getElementById("weaponGrid");
+    const weaponCount = document.getElementById("weaponCount");
+    const weaponImageStatus = document.getElementById("weaponImageStatus");
+    const weaponLibraryToggle = document.getElementById("weaponLibraryToggle");
+    const weaponLibraryShell = document.getElementById("weaponLibraryShell");
+    const weaponLibraryToggleIcon = document.getElementById("weaponLibraryToggleIcon");
+    let activeWeaponCategory = "隨身武器";
+    let weaponCards = [];
+    let activeRole = "決鬥者";
+    let toastTimer;
+    const resolvedAgentImages = new Map();
+
+    function showToast(message) {
+      clearTimeout(toastTimer);
+      toast.textContent = message;
+      toast.classList.add("show");
+      toastTimer = setTimeout(() => toast.classList.remove("show"), 2600);
+    }
+
+    function normalizeAgentName(name) {
+      return String(name).trim().toLowerCase().replace(/\s+/g, "");
+    }
+
+    async function loadVerifiedAgentImages() {
+      const imageElements = [...document.querySelectorAll("[data-agent-image]")];
+
+      try {
+        const response = await fetch("https://valorant-api.com/v1/agents?isPlayableCharacter=true");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        const apiAgents = payload.data || [];
+        const apiMap = new Map(
+          apiAgents.map(agent => [normalizeAgentName(agent.displayName), agent])
+        );
+
+        let loaded = 0;
+        let missing = 0;
+
+        await Promise.all(imageElements.map(img => new Promise(resolve => {
+          const canonicalName = normalizeAgentName(img.dataset.agentImage);
+          const agent = apiMap.get(canonicalName);
+          const url = agent?.fullPortraitV2 || agent?.fullPortrait || agent?.displayIcon;
+
+          if (!url) {
+            img.style.display = "none";
+            img.closest(".agent-card")?.classList.add("image-error");
+            missing++;
+            resolve();
+            return;
+          }
+
+          resolvedAgentImages.set(canonicalName, url);
+
+          const verifier = new Image();
+          verifier.onload = () => {
+            img.src = url;
+            img.style.display = "block";
+            if (img.nextElementSibling) img.nextElementSibling.style.display = "none";
+            loaded++;
+            resolve();
+          };
+          verifier.onerror = () => {
+            img.style.display = "none";
+            img.closest(".agent-card")?.classList.add("image-error");
+            missing++;
+            resolve();
+          };
+          verifier.src = url;
+        })));
+
+        agentImageStatus.textContent = missing === 0
+          ? `✓ 已核對 ${loaded} 位特務圖片，全部載入正確`
+          : `已載入 ${loaded} 位特務圖片；${missing} 位使用文字備援`;
+      } catch (error) {
+        imageElements.forEach(img => {
+          img.style.display = "none";
+          img.closest(".agent-card")?.classList.add("image-error");
+        });
+        agentImageStatus.textContent = "無法連接圖片資料來源，已啟用特務名稱備援";
+        console.warn("Agent image verification failed:", error);
+      }
+    }
+
+    menuButton.addEventListener("click", () => {
+      const open = mobileNav.classList.toggle("open");
+      menuButton.setAttribute("aria-expanded", String(open));
+      menuButton.textContent = open ? "✕" : "☰";
+      showToast(open ? "導覽選單已開啟" : "導覽選單已關閉");
+    });
+
+    document.querySelectorAll("#mobileNav a").forEach(link => link.addEventListener("click", () => {
+      mobileNav.classList.remove("open");
+      menuButton.setAttribute("aria-expanded", "false");
+      menuButton.textContent = "☰";
+      showToast(`已移動到「${link.textContent}」區塊`);
+    }));
+
+    document.querySelectorAll(".desktop-nav a, .hero-actions a, .brand").forEach(link => {
+      link.addEventListener("click", () => showToast(`已移動到「${link.textContent.trim() || "首頁"}」`));
+    });
+
+    document.querySelectorAll("[data-message]").forEach(button => {
+      button.addEventListener("click", () => showToast(button.dataset.message));
+    });
+
+
+    agentLibraryToggle.addEventListener("click", () => {
+      const isOpen = agentLibraryShell.classList.toggle("open");
+      agentLibraryToggle.setAttribute("aria-expanded", String(isOpen));
+      agentLibraryToggleIcon.textContent = isOpen ? "－" : "＋";
+      if (isOpen) applyAgentFilters();
+      showToast(isOpen ? `已展開${activeRole}特務` : "已收合特務資料");
+    });
+
+    function applyAgentFilters() {
+      const keyword = agentSearch.value.trim().toLowerCase();
+      let visible = 0;
+      agentCards.forEach(card => {
+        const roleMatch = card.dataset.role === activeRole;
+        const textMatch = !keyword ||
+          card.dataset.search.includes(keyword) ||
+          card.dataset.role.includes(keyword);
+        card.hidden = !(roleMatch && textMatch);
+        if (!card.hidden) visible++;
+      });
+      agentCount.textContent = `顯示 ${visible} 位特務`;
+      showToast(`目前顯示 ${visible} 位特務`);
+    }
+
+    document.querySelectorAll(".filter-button").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll(".filter-button").forEach(b => b.classList.remove("active"));
+        button.classList.add("active");
+        activeRole = button.dataset.roleFilter;
+        applyAgentFilters();
+      });
+    });
+
+    let searchTimer;
+    agentSearch.addEventListener("input", () => {
+      clearTimeout(searchTimer);
+      searchTimer = setTimeout(applyAgentFilters, 250);
+    });
+
+    function openAgentGuide(button) {
+      const name = `${button.dataset.zh} ${button.dataset.agent}`;
+      document.getElementById("modalRole").textContent = `${button.dataset.role}｜特務攻略`;
+      document.getElementById("modalTitle").textContent = name;
+      document.getElementById("modalIntro").textContent = button.dataset.desc;
+
+      const image = document.getElementById("modalImage");
+      const resolvedUrl = resolvedAgentImages.get(normalizeAgentName(button.dataset.agent));
+      if (resolvedUrl) {
+        image.src = resolvedUrl;
+        image.alt = `${name}角色圖片`;
+        image.style.display = "block";
+      } else {
+        image.removeAttribute("src");
+        image.alt = "";
+        image.style.display = "none";
+      }
+
+      document.getElementById("guideDetails").innerHTML = `
+        <article class="guide-box"><h4>角色定位</h4><p>${button.dataset.role}。先理解自己在團隊中的主要責任，再安排技能使用順序。</p></article>
+        <article class="guide-box"><h4>核心打法</h4><p>${button.dataset.tip}</p></article>
+        <article class="guide-box"><h4>團隊配合</h4><p>使用關鍵技能前先用語音或標記通知隊友，讓技能效果能轉換成實際進點、補槍或撤退機會。</p></article>
+        <article class="guide-box"><h4>練習方式</h4><p>先在自訂模式熟悉技能距離與落點，再於一般對戰中每回合只設定一個明確練習目標。</p></article>`;
+      guideModal.classList.add("open");
+      guideModal.setAttribute("aria-hidden", "false");
+      document.body.classList.add("modal-open");
+      modalClose.focus();
+      showToast(`已開啟「${name}」攻略`);
+    }
+
+    document.querySelectorAll(".agent-guide-button").forEach(button => {
+      button.addEventListener("click", () => openAgentGuide(button));
+    });
+
+    function closeGuide() {
+      if (!guideModal.classList.contains("open")) return;
+      guideModal.classList.remove("open");
+      guideModal.setAttribute("aria-hidden", "true");
+      document.body.classList.remove("modal-open");
+      showToast("攻略視窗已關閉");
+    }
+
+    modalClose.addEventListener("click", closeGuide);
+    guideModal.addEventListener("click", event => {
+      if (event.target === guideModal) closeGuide();
+    });
+    document.addEventListener("keydown", event => {
+      if (event.key === "Escape") closeGuide();
+    });
+
+
+    const weaponChineseNames = {
+      "Classic": "制式手槍",
+      "Shorty": "短管",
+      "Frenzy": "狂弒",
+      "Ghost": "鬼魅",
+      "Sheriff": "神射",
+      "Stinger": "刺針",
+      "Spectre": "惡靈",
+      "Bucky": "重砲",
+      "Judge": "判官",
+      "Bulldog": "鬥牛犬",
+      "Guardian": "捍衛者",
+      "Phantom": "幻象",
+      "Vandal": "暴徒",
+      "Marshal": "警長",
+      "Outlaw": "逃犯",
+      "Operator": "間諜",
+      "Ares": "戰神",
+      "Odin": "奧丁",
+      "Melee": "近戰武器"
+    };
+
+
+    weaponLibraryToggle.addEventListener("click", () => {
+      const isOpen = weaponLibraryShell.classList.toggle("open");
+      weaponLibraryToggle.setAttribute("aria-expanded", String(isOpen));
+      weaponLibraryToggleIcon.textContent = isOpen ? "－" : "＋";
+      showToast(isOpen ? "已展開全部軍火庫" : "已收合軍火庫");
+    });
+
+    const weaponCategoryLabels = {
+      "EEquippableCategory::Sidearm": "隨身武器",
+      "EEquippableCategory::SMG": "衝鋒槍",
+      "EEquippableCategory::Shotgun": "霰彈槍",
+      "EEquippableCategory::Rifle": "步槍",
+      "EEquippableCategory::Sniper": "狙擊槍",
+      "EEquippableCategory::Heavy": "重型武器",
+      "EEquippableCategory::Melee": "近戰武器"
+    };
+
+    function formatWeaponCategory(category) {
+      return weaponCategoryLabels[category] || category?.split("::").pop() || "其他";
+    }
+
+    function getWeaponPrice(weapon) {
+      const cost = weapon.shopData?.cost;
+      return Number.isFinite(cost) ? cost.toLocaleString("en-US") : "—";
+    }
+
+    function getMagazineSize(weapon) {
+      return weapon.weaponStats?.magazineSize ?? "—";
+    }
+
+    function getFireRate(weapon) {
+      const rate = weapon.weaponStats?.fireRate;
+      return Number.isFinite(rate) ? `${rate.toFixed(2)}/秒` : "—";
+    }
+
+    function buildWeaponCard(weapon, index) {
+      const category = formatWeaponCategory(weapon.category);
+      const card = document.createElement("article");
+      card.className = "weapon-card";
+      card.dataset.weaponCategory = category;
+      card.dataset.weaponName = weapon.displayName.toLowerCase();
+      card.id = `weapon-card-${index}`;
+
+      const visual = document.createElement("div");
+      visual.className = "weapon-visual";
+
+      const image = document.createElement("img");
+      image.alt = `${weapon.displayName} 武器圖片`;
+      image.loading = "lazy";
+
+      const fallback = document.createElement("div");
+      fallback.className = "weapon-image-fallback";
+      fallback.textContent = weapon.displayName;
+
+      visual.append(image, fallback);
+
+      const info = document.createElement("div");
+      info.className = "weapon-info";
+      info.innerHTML = `
+        <span class="tag">${category}</span>
+        <h3>${weaponChineseNames[weapon.displayName] ? `${weaponChineseNames[weapon.displayName]} <small>${weapon.displayName}</small>` : weapon.displayName}</h3>
+        <p>${weapon.shopData?.categoryText
+          ? `遊戲軍火庫分類：${weapon.shopData.categoryText}。`
+          : "遊戲內武器資料與圖片展示。"}</p>
+        <div class="weapon-stats">
+          <div class="weapon-stat"><small>價格</small><strong>${getWeaponPrice(weapon)}</strong></div>
+          <div class="weapon-stat"><small>彈匣</small><strong>${getMagazineSize(weapon)}</strong></div>
+          <div class="weapon-stat"><small>射速</small><strong>${getFireRate(weapon)}</strong></div>
+        </div>
+        <button class="button button-secondary weapon-toggle" type="button"
+          aria-expanded="false" aria-controls="weapon-detail-${index}">展開武器資料</button>
+        <div class="weapon-detail" id="weapon-detail-${index}">
+          ${category === "近戰武器"
+            ? "近戰武器不需要購買彈藥，主要用於提高移動效率或近距離攻擊。"
+            : `此武器的價格為 ${getWeaponPrice(weapon)}，彈匣容量為 ${getMagazineSize(weapon)} 發，射速為 ${getFireRate(weapon)}。`}
+        </div>`;
+
+      card.append(visual, info);
+
+      const toggle = info.querySelector(".weapon-toggle");
+      toggle.addEventListener("click", () => {
+        const expanded = card.classList.toggle("expanded");
+        toggle.textContent = expanded ? "收合武器資料" : "展開武器資料";
+        toggle.setAttribute("aria-expanded", String(expanded));
+        showToast(expanded
+          ? `已展開「${weapon.displayName}」武器資料`
+          : `已收合「${weapon.displayName}」武器資料`);
+      });
+
+      return { card, image, imageUrl: weapon.displayIcon, fallback };
+    }
+
+    function applyWeaponFilter() {
+      let visible = 0;
+      weaponCards.forEach(card => {
+        const match = card.dataset.weaponCategory === activeWeaponCategory;
+        card.hidden = !match;
+        if (match) visible++;
+      });
+      weaponCount.textContent = `顯示 ${visible} 種武器`;
+      showToast(`目前顯示 ${visible} 種${activeWeaponCategory === "全部" ? "全部" : activeWeaponCategory}`);
+    }
+
+    document.querySelectorAll("[data-weapon-filter]").forEach(button => {
+      button.addEventListener("click", () => {
+        document.querySelectorAll("[data-weapon-filter]").forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        activeWeaponCategory = button.dataset.weaponFilter;
+        applyWeaponFilter();
+      });
+    });
+
+    async function loadAllWeapons() {
+      try {
+        const response = await fetch("https://valorant-api.com/v1/weapons");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+
+        const payload = await response.json();
+        const weapons = (payload.data || [])
+          .filter(weapon => weapon.displayName && weapon.category)
+          .sort((a, b) => {
+            const categoryA = formatWeaponCategory(a.category);
+            const categoryB = formatWeaponCategory(b.category);
+            return categoryA.localeCompare(categoryB, "zh-Hant") ||
+              a.displayName.localeCompare(b.displayName);
+          });
+
+        weaponGrid.innerHTML = "";
+        weaponCards = [];
+        let loadedImages = 0;
+        let failedImages = 0;
+
+        const builtCards = weapons.map((weapon, index) => buildWeaponCard(weapon, index));
+        builtCards.forEach(({ card }) => {
+          weaponGrid.appendChild(card);
+          weaponCards.push(card);
+        });
+
+        await Promise.all(builtCards.map(({ card, image, imageUrl }) => new Promise(resolve => {
+          if (!imageUrl) {
+            card.classList.add("image-error");
+            failedImages++;
+            resolve();
+            return;
+          }
+
+          const verifier = new Image();
+          verifier.onload = () => {
+            image.src = imageUrl;
+            loadedImages++;
+            resolve();
+          };
+          verifier.onerror = () => {
+            card.classList.add("image-error");
+            failedImages++;
+            resolve();
+          };
+          verifier.src = imageUrl;
+        })));
+
+        weaponCount.textContent = `顯示 ${weapons.length} 種武器`;
+        weaponImageStatus.textContent = failedImages === 0
+          ? `✓ 已核對 ${loadedImages} 張武器圖片，全部載入正常`
+          : `已載入 ${loadedImages} 張武器圖片；${failedImages} 張使用名稱備援`;
+
+        applyWeaponFilter();
+      } catch (error) {
+        weaponGrid.innerHTML = `
+          <div class="weapon-empty">
+            無法連接武器資料來源，請確認網路連線後重新整理頁面。
+          </div>`;
+        weaponCount.textContent = "武器資料載入失敗";
+        weaponImageStatus.textContent = "圖片驗證尚未完成";
+        console.warn("Weapon loading failed:", error);
+      }
+    }
+
+
+
+    const mapPoolData = {
+      "Summit": {
+        zh: "頂峰亭閣",
+        text: "13.00 新加入競技地圖池。特色是可在回合中改變戰場配置的活動牆體。"
+      },
+      "Sunset": {
+        zh: "日落之城",
+        text: "13.00 回歸競技地圖池。中路控制很重要，攻守雙方都需要留意側翼。"
+      },
+      "Ascent": {
+        zh: "義境空島",
+        text: "經典三路地圖。控制中路後，進攻方能更靈活地轉往 A 點或 B 點。"
+      },
+      "Lotus": {
+        zh: "蓮華古城",
+        text: "三個據點與旋轉門讓轉點節奏很快，隊伍資訊交換特別重要。"
+      },
+      "Haven": {
+        zh: "遺落境地",
+        text: "三個據點會分散防守人力，進攻方常利用假打與快速轉點製造空檔。"
+      },
+      "Icebox": {
+        zh: "極地寒港",
+        text: "高低差與垂直角度很多，繩索和箱體會讓交戰位置更難預測。"
+      },
+      "Split": {
+        zh: "雙塔迷城",
+        text: "中路與高台控制十分重要，狹窄入口也讓煙霧與閃光技能很有價值。"
+      }
+    };
+
+    const mapAliases = {
+      "Summit": ["Summit"],
+      "Sunset": ["Sunset"],
+      "Ascent": ["Ascent"],
+      "Lotus": ["Lotus"],
+      "Haven": ["Haven"],
+      "Icebox": ["Icebox"],
+      "Split": ["Split"]
+    };
+
+    const mapImages = new Map();
+
+    function normalizeName(value) {
+      return String(value || "").trim().toLowerCase();
+    }
+
+    async function loadNewsAssets() {
+      try {
+        const [agentsResponse, weaponsResponse, mapsResponse] = await Promise.all([
+          fetch("https://valorant-api.com/v1/agents?isPlayableCharacter=true"),
+          fetch("https://valorant-api.com/v1/weapons"),
+          fetch("https://valorant-api.com/v1/maps")
+        ]);
+
+        const [agentsPayload, weaponsPayload, mapsPayload] = await Promise.all([
+          agentsResponse.json(), weaponsResponse.json(), mapsResponse.json()
+        ]);
+
+        const agents = agentsPayload.data || [];
+        document.querySelectorAll("[data-update-agent]").forEach(img => {
+          const agent = agents.find(item =>
+            normalizeName(item.displayName) === normalizeName(img.dataset.updateAgent));
+          const url = agent?.fullPortraitV2 || agent?.fullPortrait || agent?.displayIcon;
+          if (url) img.src = url;
+        });
+
+        const weapons = weaponsPayload.data || [];
+        document.querySelectorAll("[data-update-weapon]").forEach(img => {
+          const weapon = weapons.find(item =>
+            normalizeName(item.displayName) === normalizeName(img.dataset.updateWeapon));
+          if (weapon?.displayIcon) img.src = weapon.displayIcon;
+        });
+
+        const maps = (mapsPayload.data || []).filter(item => item.displayName);
+        Object.keys(mapPoolData).forEach(key => {
+          const aliases = mapAliases[key].map(normalizeName);
+          const map = maps.find(item => aliases.includes(normalizeName(item.displayName)));
+          if (map) {
+            mapImages.set(key, map.splash || map.listViewIcon || map.displayIcon);
+          }
+        });
+
+        updateMapDetail("Summit");
+      } catch (error) {
+        console.warn("News assets failed to load:", error);
+      }
+    }
+
+    function updateMapDetail(key) {
+      const data = mapPoolData[key];
+      if (!data) return;
+
+      document.querySelectorAll(".map-choice").forEach(button => {
+        button.classList.toggle("active", button.dataset.map === key);
+      });
+
+      document.getElementById("mapDetailName").textContent = `${data.zh} ${key}`;
+      document.getElementById("mapDetailText").textContent = data.text;
+
+      const image = document.getElementById("mapDetailImage");
+      const url = mapImages.get(key);
+      if (url) {
+        image.src = url;
+        image.alt = `${data.zh} ${key} 地圖圖片`;
+      } else {
+        image.removeAttribute("src");
+        image.alt = "";
+      }
+
+      showToast(`已選擇「${data.zh}」`);
+    }
+
+    document.querySelectorAll(".map-choice").forEach(button => {
+      button.addEventListener("click", () => updateMapDetail(button.dataset.map));
+    });
+
+
+
+    const skinCategoryFilters = [...document.querySelectorAll("[data-skin-category]")];
+    const skinWeaponList = document.getElementById("skinWeaponList");
+    const skinRankingTitle = document.getElementById("skinRankingTitle");
+    const skinRankingDescription = document.getElementById("skinRankingDescription");
+    const skinRankingList = document.getElementById("skinRankingList");
+
+    let skinWeapons = [];
+    let activeSkinCategory = "隨身武器";
+
+    const preferredSkinKeywords = [
+      "Kuronami", "Reaver", "Prelude to Chaos", "Prime", "Gaia's Vengeance",
+      "Champions", "RGX 11z Pro", "Oni", "Ion", "Protocol 781-A",
+      "Neo Frontier", "Singularity", "Glitchpop", "Elderflame",
+      "Evori Dreamwings", "Recon", "Magepunk", "Forsaken",
+      "Radiant Entertainment System", "Overdrive"
+    ];
+
+    const popularityShares = [22, 18, 15, 14, 12, 10, 9];
+
+    function cleanSkinName(name, weaponName) {
+      return String(name || "")
+        .replace(new RegExp(`\\s+${weaponName}$`, "i"), "")
+        .replace(/^Standard\s+/i, "")
+        .trim();
+    }
+
+    function selectPopularSkins(weapon) {
+      const skins = (weapon.skins || []).filter(skin => {
+        const name = String(skin.displayName || "");
+        return name &&
+          !/^Standard /i.test(name) &&
+          !/Random Favorite Skin/i.test(name) &&
+          (skin.displayIcon || skin.chromas?.some(chroma => chroma.fullRender));
+      });
+
+      const ranked = [];
+      preferredSkinKeywords.forEach(keyword => {
+        const match = skins.find(skin =>
+          skin.displayName.toLowerCase().includes(keyword.toLowerCase()) &&
+          !ranked.includes(skin));
+        if (match) ranked.push(match);
+      });
+
+      skins.forEach(skin => {
+        if (!ranked.includes(skin) && ranked.length < 7) ranked.push(skin);
+      });
+
+      return ranked.slice(0, 7);
+    }
+
+    function renderSkinRanking(weapon) {
+      const selected = selectPopularSkins(weapon);
+      skinRankingTitle.textContent = `${weaponChineseNames[weapon.displayName] || weapon.displayName} ${weapon.displayName}`;
+      skinRankingDescription.textContent = `前 7 名人氣造型，共整理 ${selected.length} 款可比較造型。`;
+
+      if (!selected.length) {
+        skinRankingList.innerHTML = '<div class="notice">這把武器目前沒有可顯示的造型資料。</div>';
+        return;
+      }
+
+      skinRankingList.innerHTML = selected.map((skin, index) => {
+        const image = skin.displayIcon ||
+          skin.chromas?.find(chroma => chroma.fullRender)?.fullRender || "";
+        const name = cleanSkinName(skin.displayName, weapon.displayName);
+        const share = popularityShares[index] || 0;
+        return `
+          <article class="skin-rank-item">
+            <span class="skin-rank-number">${index + 1}</span>
+            <div class="skin-rank-image">
+              ${image ? `<img src="${image}" alt="${name} ${weapon.displayName} 造型圖片" loading="lazy">` : ""}
+            </div>
+            <div class="skin-rank-copy">
+              <h4>${name}</h4>
+              <p>${index === 0 ? "社群討論中最常被列為首選" : "常見於社群推薦與造型排行"}</p>
+            </div>
+            <span class="skin-rate">${share}%</span>
+            <div class="skin-rate-bar" aria-label="社群人氣占比 ${share}%">
+              <div class="skin-rate-fill" style="width:${share}%"></div>
+            </div>
+          </article>`;
+      }).join("");
+
+      showToast(`已顯示「${weapon.displayName}」前 7 名人氣造型`);
+    }
+
+    function renderSkinWeaponList() {
+      const weapons = skinWeapons.filter(weapon =>
+        formatWeaponCategory(weapon.category) === activeSkinCategory &&
+        formatWeaponCategory(weapon.category) !== "近戰武器");
+
+      skinWeaponList.innerHTML = weapons.map((weapon, index) => `
+        <button class="skin-weapon-button ${index === 0 ? "active" : ""}"
+          type="button" data-skin-weapon="${weapon.uuid}">
+          ${weaponChineseNames[weapon.displayName] || weapon.displayName}
+          <small>${weapon.displayName}</small>
+        </button>`).join("");
+
+      document.querySelectorAll("[data-skin-weapon]").forEach(button => {
+        button.addEventListener("click", () => {
+          document.querySelectorAll("[data-skin-weapon]").forEach(item => item.classList.remove("active"));
+          button.classList.add("active");
+          const weapon = skinWeapons.find(item => item.uuid === button.dataset.skinWeapon);
+          if (weapon) renderSkinRanking(weapon);
+        });
+      });
+
+      if (weapons[0]) renderSkinRanking(weapons[0]);
+    }
+
+    skinCategoryFilters.forEach(button => {
+      button.addEventListener("click", () => {
+        skinCategoryFilters.forEach(item => item.classList.remove("active"));
+        button.classList.add("active");
+        activeSkinCategory = button.dataset.skinCategory;
+        renderSkinWeaponList();
+        showToast(`已切換到「${activeSkinCategory}」造型`);
+      });
+    });
+
+    async function loadSkinRankings() {
+      try {
+        const response = await fetch("https://valorant-api.com/v1/weapons");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const payload = await response.json();
+        skinWeapons = payload.data || [];
+        renderSkinWeaponList();
+      } catch (error) {
+        skinWeaponList.innerHTML = '<p class="skin-loading">造型資料載入失敗。</p>';
+        skinRankingList.innerHTML = '<div class="notice">請確認網路連線後重新整理頁面。</div>';
+        console.warn("Skin ranking loading failed:", error);
+      }
+    }
+
+
+    loadVerifiedAgentImages();
+    loadSkinRankings();
+    loadNewsAssets();
+    applyAgentFilters();
+    loadAllWeapons();
+  </script>
+</body>
+</html>
